@@ -1,18 +1,20 @@
 # Table Connector App
 
-## How to Deploy on GitHub Pages
+## Deployment
 
-This repository is configured to deploy automatically using **GitHub Actions**.
+This repository uses **GitHub Actions** to automatically build and deploy the application.
 
-### One-Time Setup
+### How it works
+1.  Push your code changes to the `main` branch.
+2.  GitHub Actions will automatically run the build process.
+3.  The built application will be pushed to a special branch called `gh-pages`.
+
+### Configuration (One-Time Setup)
 
 1.  Go to your repository **Settings** on GitHub.
 2.  Click on **Pages** in the left sidebar.
-3.  Under **Build and deployment**, change the **Source** from **Deploy from a branch** to **GitHub Actions**.
-4.  There is no need to select a branch or folder; the workflow file `.github/workflows/deploy.yml` handles everything.
-
-### Deployment
-
-Every time you push changes to the `main` branch, the deployment workflow will automatically run, build the application, and update the live site.
+3.  Under **Build and deployment**, select **Source** as **Deploy from a branch**.
+4.  Under **Branch**, select `gh-pages` and `/ (root)`.
+5.  Click **Save**.
 
 Your site will be live at `https://<username>.github.io/<repo-name>/`.
