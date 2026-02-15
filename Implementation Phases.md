@@ -1,7 +1,5 @@
-
 This app is part of a larger "Master Spreadsheet analyzer, 
-Phase 1: G
-Table Connector:generate Output "Connection" (Human understandable node and connection info) "Syntax" machine understandable node and connection info 
+Phase 1: Table Connector:generate Output "Connection" (Human understandable node and connection info) "Syntax" machine understandable node and connection info 
 Phase 2: Table Assembler (Based on ASSconnectors and the line text (ex: concatenate X and Y  then map with Z), using key extract data from both tables or more than1 table.
 Phase 3: Table Comparison (Compare different tables Based on COMPconnectors and the line text (ex: concatenate X and Y  then map with Z, then compare fields in combined table1_2 Vs Fields in table3))
 Phase 4: Table Synthesizer [Most exported rom pdf/word have broken data or format, this module will be used to clean up, add columns (already available in the same table), data filling if required.
