@@ -2,17 +2,17 @@
 
 ## How to Deploy on GitHub Pages
 
-This repository is configured to deploy directly from the `main` branch using the `/docs` folder.
+This repository is configured to deploy automatically using **GitHub Actions**.
 
-1.  Push your changes to the `main` branch.
-2.  Go to your repository **Settings** on GitHub.
-3.  Click on **Pages** in the left sidebar.
-4.  Under **Build and deployment**, select **Source** as **Deploy from a branch**.
-5.  Under **Branch**, select `main` and then choose `/docs` as the folder (instead of `/ (root)`).
-6.  Click **Save**.
+### One-Time Setup
+
+1.  Go to your repository **Settings** on GitHub.
+2.  Click on **Pages** in the left sidebar.
+3.  Under **Build and deployment**, change the **Source** from **Deploy from a branch** to **GitHub Actions**.
+4.  There is no need to select a branch or folder; the workflow file `.github/workflows/deploy.yml` handles everything.
+
+### Deployment
+
+Every time you push changes to the `main` branch, the deployment workflow will automatically run, build the application, and update the live site.
 
 Your site will be live at `https://<username>.github.io/<repo-name>/`.
-
-### Why am I seeing a white screen or "MIME type text/jsx" error?
-
-If you see an error like `Failed to load module script... MIME type of "text/jsx"`, it means GitHub Pages is serving the **source code** (the root folder) instead of the **built application** (the `/docs` folder). Please follow the steps above to change the deployment source to `/docs`.
