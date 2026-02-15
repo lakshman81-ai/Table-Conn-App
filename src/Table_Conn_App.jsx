@@ -1,23 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Xarrow, { Xwrapper, useXarrow } from 'react-xarrows';
+import Xarrow, { useXarrow } from 'react-xarrows';
 import Table_Conn_Table from './Table_Conn_Table';
 import './Table_Conn_styles.css';
 import useLogs from './hooks/useLogs';
 import useTables from './hooks/useTables';
 import useConnections from './hooks/useConnections';
-
-const WorkspaceArea = ({ children }) => {
-  const updateXarrow = useXarrow();
-  return (
-    <div
-      className="tc-workspace"
-      onScroll={updateXarrow}
-      style={{ flex: 1, position: 'relative', overflow: 'auto' }}
-    >
-      {children}
-    </div>
-  );
-};
 
 // Generate machine-readable syntax from connections
 function generateSyntaxOutput(connections) {
@@ -78,6 +65,9 @@ export default function Table_Conn_App() {
   const [editingInstructionId, setEditingInstructionId] = useState(null);
   const [editingInstructionText, setEditingInstructionText] = useState('');
   const [copiedSyntax, setCopiedSyntax] = useState(false);
+
+  // Triggers re-render on scroll to update arrow positions
+  const updateXarrow = useXarrow();
 
   // Keyboard Listener
   useEffect(() => {
@@ -172,152 +162,154 @@ export default function Table_Conn_App() {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         {/* ── Workspace ── */}
-        <Xwrapper>
-        <WorkspaceArea>
-            {/* Empty state */}
-            {tables.length === 0 && (
-              <div className="tc-empty-state">
-                <div className="tc-empty-state-icon">📂</div>
-                <h3>No Tables Loaded</h3>
-                <p>Load one or more CSV files to start mapping column connections.</p>
-                <div className="tc-empty-state-shortcuts">
-                  <div className="tc-shortcut-row">
-                    <span className="tc-shortcut-key">Click</span>
-                    <span>Select a column node</span>
-                  </div>
-                  <div className="tc-shortcut-row">
-                    <span className="tc-shortcut-key">Space</span>
-                    <span>Connect selected nodes</span>
-                  </div>
-                  <div className="tc-shortcut-row">
-                    <span className="tc-shortcut-key">Del</span>
-                    <span>Delete selected connection</span>
-                  </div>
-                  <div className="tc-shortcut-row">
-                    <span className="tc-shortcut-key">Right-click</span>
-                    <span>Node context menu</span>
-                  </div>
-                  <div className="tc-shortcut-row">
-                    <span className="tc-shortcut-key">Dbl-click</span>
-                    <span>Add to connection</span>
-                  </div>
+        <div
+          className="tc-workspace"
+          onScroll={updateXarrow}
+          style={{ flex: 1, position: 'relative', overflow: 'auto' }}
+        >
+          {/* Empty state */}
+          {tables.length === 0 && (
+            <div className="tc-empty-state">
+              <div className="tc-empty-state-icon">📂</div>
+              <h3>No Tables Loaded</h3>
+              <p>Load one or more CSV files to start mapping column connections.</p>
+              <div className="tc-empty-state-shortcuts">
+                <div className="tc-shortcut-row">
+                  <span className="tc-shortcut-key">Click</span>
+                  <span>Select a column node</span>
+                </div>
+                <div className="tc-shortcut-row">
+                  <span className="tc-shortcut-key">Space</span>
+                  <span>Connect selected nodes</span>
+                </div>
+                <div className="tc-shortcut-row">
+                  <span className="tc-shortcut-key">Del</span>
+                  <span>Delete selected connection</span>
+                </div>
+                <div className="tc-shortcut-row">
+                  <span className="tc-shortcut-key">Right-click</span>
+                  <span>Node context menu</span>
+                </div>
+                <div className="tc-shortcut-row">
+                  <span className="tc-shortcut-key">Dbl-click</span>
+                  <span>Add to connection</span>
                 </div>
               </div>
-            )}
-
-            {/* Tables */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', padding: 20, paddingBottom: 100 }}>
-              {tables.map(table => (
-                <Table_Conn_Table
-                  key={table.id}
-                  table={table}
-                  selectedNodes={selectedNodes}
-                  connections={connections}
-                  onNodeClick={handleNodeClick}
-                  onNodeContextMenu={handleNodeContextMenu}
-                  onNodeDoubleClick={handleNodeDoubleClick}
-                  columnLabels={columnLabels}
-                />
-              ))}
             </div>
+          )}
 
-            {/* Connection lines */}
-            {showLines && connections.map(conn => {
-              if (conn.nodes.length < 2) return null;
-              return conn.nodes.slice(0, -1).map((node, i) => {
-                const startId = `node-${node.id}`;
-                const endId = `node-${conn.nodes[i + 1].id}`;
-                const isSelected = selectedConnectionId === conn.id;
+          {/* Tables */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', padding: 20, paddingBottom: 100 }}>
+            {tables.map(table => (
+              <Table_Conn_Table
+                key={table.id}
+                table={table}
+                selectedNodes={selectedNodes}
+                connections={connections}
+                onNodeClick={handleNodeClick}
+                onNodeContextMenu={handleNodeContextMenu}
+                onNodeDoubleClick={handleNodeDoubleClick}
+                columnLabels={columnLabels}
+              />
+            ))}
+          </div>
 
-                let labelElement = null;
-                if (editingInstructionId === conn.id) {
-                  labelElement = (
-                    <div className="tc-instruction-overlay" onClick={e => e.stopPropagation()}>
-                      <input
-                        autoFocus
-                        value={editingInstructionText}
-                        onChange={e => setEditingInstructionText(e.target.value)}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter') saveInlineInstruction(conn.id);
-                          if (e.key === 'Escape') setEditingInstructionId(null);
-                        }}
-                        placeholder="e.g. LEFT JOIN"
-                      />
-                      <button
-                        style={{ background: '#007bff', color: '#fff' }}
-                        onClick={() => saveInlineInstruction(conn.id)}
-                      >Save</button>
-                      <button
-                        style={{ background: '#eee' }}
-                        onClick={() => setEditingInstructionId(null)}
-                      >✕</button>
-                    </div>
-                  );
-                } else if (conn.instructions) {
-                  labelElement = (
-                    <div
-                      className="tc-arrow-label"
-                      onClick={e => {
-                        e.stopPropagation();
-                        setEditingInstructionText(conn.instructions);
-                        setEditingInstructionId(conn.id);
+          {/* Connection lines */}
+          {showLines && connections.map(conn => {
+            if (conn.nodes.length < 2) return null;
+            return conn.nodes.slice(0, -1).map((node, i) => {
+              const startId = `node-${node.id}`;
+              const endId = `node-${conn.nodes[i + 1].id}`;
+              const isSelected = selectedConnectionId === conn.id;
+
+              let labelElement = null;
+              if (editingInstructionId === conn.id) {
+                labelElement = (
+                  <div className="tc-instruction-overlay" onClick={e => e.stopPropagation()}>
+                    <input
+                      autoFocus
+                      value={editingInstructionText}
+                      onChange={e => setEditingInstructionText(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') saveInlineInstruction(conn.id);
+                        if (e.key === 'Escape') setEditingInstructionId(null);
                       }}
-                      title="Click to edit instruction"
-                    >
-                      {conn.instructions}
-                    </div>
-                  );
-                } else {
-                  labelElement = (
-                    <div
-                      className="tc-arrow-label"
-                      style={{ color: '#aaa', fontStyle: 'italic' }}
-                      onClick={e => {
-                        e.stopPropagation();
-                        setEditingInstructionText('');
-                        setEditingInstructionId(conn.id);
-                      }}
-                      title="Click to add instruction"
-                    >
-                      + add label
-                    </div>
-                  );
-                }
-
-                return (
-                  <Xarrow
-                    key={`${conn.id}-${i}`}
-                    start={startId}
-                    end={endId}
-                    color={conn.color}
-                    strokeWidth={isSelected ? 5 : 3}
-                    headSize={6}
-                    curveness={0.4}
-                    path="smooth"
-                    startAnchor="bottom"
-                    endAnchor="top"
-                    labels={{ middle: labelElement }}
-                    passProps={{
-                      onClick: (e) => {
-                        e.stopPropagation();
-                        setSelectedConnectionId(conn.id);
-                        addLog(`Selected Connection: ${conn.id}`);
-                      },
-                      style: { cursor: 'pointer' }
-                    }}
-                  />
+                      placeholder="e.g. LEFT JOIN"
+                    />
+                    <button
+                      style={{ background: '#007bff', color: '#fff' }}
+                      onClick={() => saveInlineInstruction(conn.id)}
+                    >Save</button>
+                    <button
+                      style={{ background: '#eee' }}
+                      onClick={() => setEditingInstructionId(null)}
+                    >✕</button>
+                  </div>
                 );
-              });
-            })}
+              } else if (conn.instructions) {
+                labelElement = (
+                  <div
+                    className="tc-arrow-label"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setEditingInstructionText(conn.instructions);
+                      setEditingInstructionId(conn.id);
+                    }}
+                    title="Click to edit instruction"
+                  >
+                    {conn.instructions}
+                  </div>
+                );
+              } else {
+                labelElement = (
+                  <div
+                    className="tc-arrow-label"
+                    style={{ color: '#aaa', fontStyle: 'italic' }}
+                    onClick={e => {
+                      e.stopPropagation();
+                      setEditingInstructionText('');
+                      setEditingInstructionId(conn.id);
+                    }}
+                    title="Click to add instruction"
+                  >
+                    + add label
+                  </div>
+                );
+              }
 
-            {/* Workspace controls (placeholder) */}
-            <div className="tc-workspace-controls">
-              <button className="tc-workspace-ctrl-btn" disabled title="Zoom In (coming soon)">+</button>
-              <button className="tc-workspace-ctrl-btn" disabled title="Zoom Out (coming soon)">−</button>
-              <button className="tc-workspace-ctrl-btn" disabled title="Reset (coming soon)">⌂</button>
-            </div>
-        </WorkspaceArea>
-        </Xwrapper>
+              return (
+                <Xarrow
+                  key={`${conn.id}-${i}`}
+                  start={startId}
+                  end={endId}
+                  color={conn.color}
+                  strokeWidth={isSelected ? 5 : 3}
+                  headSize={6}
+                  curveness={0.4}
+                  path="smooth"
+                  startAnchor="bottom"
+                  endAnchor="top"
+                  labels={{ middle: labelElement }}
+                  passProps={{
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      setSelectedConnectionId(conn.id);
+                      addLog(`Selected Connection: ${conn.id}`);
+                    },
+                    style: { cursor: 'pointer' }
+                  }}
+                />
+              );
+            });
+          })}
+
+          {/* Workspace controls (placeholder) */}
+          <div className="tc-workspace-controls">
+            <button className="tc-workspace-ctrl-btn" disabled title="Zoom In (coming soon)">+</button>
+            <button className="tc-workspace-ctrl-btn" disabled title="Zoom Out (coming soon)">−</button>
+            <button className="tc-workspace-ctrl-btn" disabled title="Reset (coming soon)">⌂</button>
+          </div>
+        </div>
 
         {/* ── Right Panel ── */}
         <div className="tc-right-panel">
