@@ -1,0 +1,53 @@
+
+This app is part of a larger "Master Spreadsheet analyzer, 
+Phase 1: G
+Table Connector:generate Output "Connection" (Human understandable node and connection info) "Syntax" machine understandable node and connection info 
+Phase 2: Table Assembler (Based on ASSconnectors and the line text (ex: concatenate X and Y  then map with Z), using key extract data from both tables or more than1 table.
+Phase 3: Table Comparison (Compare different tables Based on COMPconnectors and the line text (ex: concatenate X and Y  then map with Z, then compare fields in combined table1_2 Vs Fields in table3))
+Phase 4: Table Synthesizer [Most exported rom pdf/word have broken data or format, this module will be used to clean up, add columns (already available in the same table), data filling if required.
+Phase 5: expand from csv to excel, word and pdf imports. Improved Table Synthesizer module with macro recoding features.
+
+Phase 1:Table Connector
+User interface:
+Load one or more CSV files to start mapping column connections.
+Node:
+How to select Node (Have multiple ways, on obvious way is to left click the header (Node), an alternative choices can we have?)
+Grouping Logic: Connect selected nodes (>=2) "A popup asking for connection and connection text", provide alternative option also ex: after one node is selected, "+" appears on hover of any table, one "+" clicked keep adding to connection, dynamic "Done" icon on title bar, when once click popup asked for connection text (transformation rules for selected nodes-headers)
+On clicking connection : show "Delete connection", "Add to connection", "Edit connection text"
+
+"Smart Connect" (This will be a complex engine which will scan through all the imported table and detect similar sounding columns and create propsed connections automatically.This propose connected will appear as a editable tale ex: table1>Col1-table1>Col1 (Do not scan generic works like column , etc) [Configurable in setting]
+
+zoom functionality: 
+Normally Auto zoom loaded table especially make column label visible and user friendly for user. (Needs a smart logic for this to detect no. of valid column, column width to arrive displayed table's column width/ header height  zoom level"
+
+
+UI Layout & Interaction Flow (LATEST):
+
+A. Loading Phase
+File Upload: A primary "Load CSVs" button triggers a file picker (multiple selection allowed).
+Parsing: papaparse reads headers + first 2 data rows.
+Rendering: Tables are displayed in a grid/flex layout. Each header cell contains a "Connector Icon" (Node).
+B. Selection & Grouping
+Selection: Clicking a Node toggles its selection state. Selected nodes appear larger/highlighted.
+Grouping : Refer Grouping Logic
+Create a new Connection (C_n) with a unique ID and Color.
+Clear selectedNodes.
+Update the Nodes to display the Connection Serial Number (e.g., ①) inside the icon.
+Log entry created: "Group Created: C1 with [Table1.Col1, Table2.Col2]".
+C. Visualizing Connections
+"Connect" Button:
+Triggers the rendering of <Xarrow> components between grouped nodes.
+Lines are colored according to the Connection's assigned color.
+Lines persist visually.
+Deleting Lines:
+Clicking a line selects it (visual feedback).
+Pressing Delete removes the Connection (ungroups the nodes).
+D. Context Menu & Metadata
+Right-Click on Node:
+Opens a custom context menu.
+Options:
+Set Start Node: Marks this node as the origin of the relationship (updates Log).
+Set End Node: Marks this node as the destination (updates Log).
+Add Instructions: Opens a prompt/modal to enter text (e.g., "Left Join").
+Log Updates: Any change via context menu appends a formatted entry to the Log.
+
