@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nUI revamp: horizontal table headers, tabbed right panel, inline instructions\n\nMajor improvements:\n- Table column headers now display horizontally \\(can toggle back to vertical\\)\n- More data rows shown \\(5 instead of 2\\)\n- Column count and row count badges on table headers\n- Right panel now has 3 tabs: Connections, Syntax Output, Log\n- Inline instruction editing on connection lines \\(no more prompt dialogs\\)\n- Expanded context menu with 7 options for connected nodes, 2 for unconnected\n- Machine-readable syntax output with Copy to Clipboard\n- Column labeling support\n- Enhanced empty state with keyboard shortcut hints\n- Placeholder zoom controls in header and workspace\n- Support for 3+ table connections with chained syntax output\n\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
