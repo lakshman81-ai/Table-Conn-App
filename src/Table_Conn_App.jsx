@@ -6,6 +6,19 @@ import useLogs from './hooks/useLogs';
 import useTables from './hooks/useTables';
 import useConnections from './hooks/useConnections';
 
+const WorkspaceArea = ({ children }) => {
+  const updateXarrow = useXarrow();
+  return (
+    <div
+      className="tc-workspace"
+      onScroll={updateXarrow}
+      style={{ flex: 1, position: 'relative', overflow: 'auto' }}
+    >
+      {children}
+    </div>
+  );
+};
+
 // Generate machine-readable syntax from connections
 function generateSyntaxOutput(connections) {
   const lines = [];
@@ -65,7 +78,6 @@ export default function Table_Conn_App() {
   const [editingInstructionId, setEditingInstructionId] = useState(null);
   const [editingInstructionText, setEditingInstructionText] = useState('');
   const [copiedSyntax, setCopiedSyntax] = useState(false);
-  const updateXarrow = useXarrow();
 
   // Keyboard Listener
   useEffect(() => {
@@ -161,11 +173,7 @@ export default function Table_Conn_App() {
 
         {/* ── Workspace ── */}
         <Xwrapper>
-          <div
-            className="tc-workspace"
-            onScroll={updateXarrow}
-            style={{ flex: 1, position: 'relative', overflow: 'auto' }}
-          >
+        <WorkspaceArea>
             {/* Empty state */}
             {tables.length === 0 && (
               <div className="tc-empty-state">
@@ -308,7 +316,7 @@ export default function Table_Conn_App() {
               <button className="tc-workspace-ctrl-btn" disabled title="Zoom Out (coming soon)">−</button>
               <button className="tc-workspace-ctrl-btn" disabled title="Reset (coming soon)">⌂</button>
             </div>
-          </div>
+        </WorkspaceArea>
         </Xwrapper>
 
         {/* ── Right Panel ── */}
